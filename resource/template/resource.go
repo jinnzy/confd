@@ -24,7 +24,7 @@ import (
 
 type Config struct {
 	ConfDir       string `toml:"confdir"`
-	ConfigDir     string
+	ConfigDir     string //  默认路径等于 ConfDir + conf.d 所以是这个路径/etc/confd/conf.d
 	KeepStageFile bool
 	Noop          bool   `toml:"noop"`
 	Prefix        string `toml:"prefix"`

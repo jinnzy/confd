@@ -99,6 +99,7 @@ func RecursiveFilesLookup(root string, pattern string) ([]string, error) {
 }
 
 func RecursiveDirsLookup(root string, pattern string) ([]string, error) {
+	// pattern 默认为*.toml
 	return recursiveLookup(root, pattern, true)
 }
 

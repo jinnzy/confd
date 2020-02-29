@@ -77,6 +77,7 @@ func WatchProcessor(config Config, stopChan, doneChan chan bool, errChan chan er
 
 func (p *watchProcessor) Process() {
 	defer close(p.doneChan)
+	// 获取配置文件目录下的template
 	ts, err := getTemplateResources(p.config)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -116,6 +117,7 @@ func getTemplateResources(config Config) ([]*TemplateResource, error) {
 		log.Warning(fmt.Sprintf("Cannot load template resources: confdir '%s' does not exist", config.ConfDir))
 		return nil, nil
 	}
+	// config.ConfigDir默认路径是/etc/confd/conf.d，找出*toml文件，返回路径
 	paths, err := util.RecursiveFilesLookup(config.ConfigDir, "*toml")
 	if err != nil {
 		return nil, err
