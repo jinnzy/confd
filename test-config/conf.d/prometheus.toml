@@ -1,0 +1,9 @@
+[template]
+src = "prometheus.yml.tmpl"
+dest = "./test-config/prometheus.yml"
+prefix = "/prometheus"
+keys = [
+"/172.31.101.212",
+]
+#check_cmd = "/usr/bin/promtool check config /etc/prometheus/prometheus.yml"
+#reload_cmd = "curl -X POST http://127.0.0.1:9090/-/reload"

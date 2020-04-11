@@ -1,0 +1,21 @@
+global:
+  scrape_interval:     1m
+  evaluation_interval: 1m
+  scrape_timeout:      30s
+  external_labels:
+    monitor: "172.31.101.212"
+rule_files:
+  - /etc/prometheus/*.rules
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets:
+            - "alertmanager:9093"
+scrape_configs:
+{{- range $dir := lsdir "/172.31.101.212/jobs" }}
+{{- $job := printf "/172.31.101.212/jobs/%s/*" $dir }}
+{{- range gets $job }}
+{{ .Value }}
+{{- end }}
+{{- end }}

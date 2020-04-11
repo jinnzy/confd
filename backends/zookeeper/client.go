@@ -1,6 +1,7 @@
 package zookeeper
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
@@ -15,7 +16,7 @@ type Client struct {
 }
 
 func NewZookeeperClient(machines []string) (*Client, error) {
-	c, _, err := zk.Connect(machines, time.Second) //*10)
+	c, _, err := zk.Connect(machines, 10000*time.Second) //*10)
 	if err != nil {
 		panic(err)
 	}
@@ -26,13 +27,13 @@ func nodeWalk(prefix string, c *Client, vars map[string]string) error {
 	var s string
 	l, stat, err := c.client.Children(prefix)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w. %s",err,prefix)
 	}
 
 	if stat.NumChildren == 0 {
 		b, _, err := c.client.Get(prefix)
 		if err != nil {
-			return err
+			return fmt.Errorf("%w. %s",err,prefix)
 		}
 		vars[prefix] = string(b)
 
@@ -45,7 +46,7 @@ func nodeWalk(prefix string, c *Client, vars map[string]string) error {
 			}
 			_, stat, err := c.client.Exists(s)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w. %s",err,s)
 			}
 			if stat.NumChildren == 0 {
 				b, _, err := c.client.Get(s)
@@ -67,11 +68,11 @@ func (c *Client) GetValues(keys []string) (map[string]string, error) {
 		v = strings.Replace(v, "/*", "", -1)
 		_, _, err := c.client.Exists(v)
 		if err != nil {
-			return vars, err
+			return vars, fmt.Errorf("%w. %s",err,v)
 		}
 		err = nodeWalk(v, c, vars)
 		if err != nil {
-			return vars, err
+			return vars, fmt.Errorf("%w. %s",err,v)
 		}
 	}
 	return vars, nil
@@ -129,9 +130,11 @@ func (c *Client) WatchPrefix(prefix string, keys []string, waitIndex uint64, sto
 	//watch all subfolders for changes
 	watchMap := make(map[string]string)
 	for k, _ := range entries {
+		// keys为配置文件中prefix+key组成的多个值
 		for _, v := range keys {
 			if strings.HasPrefix(k, v) {
-				for dir := filepath.Dir(k); dir != "/"; dir = filepath.Dir(dir) {
+				// fix: windows下会出现dir一直为\目录，造成死循环
+				for dir := filepath.ToSlash(filepath.Dir(k)); dir != "/"; dir =  filepath.ToSlash(filepath.Dir(dir)) {
 					if _, ok := watchMap[dir]; !ok {
 						watchMap[dir] = ""
 						log.Debug("Watching: " + dir)

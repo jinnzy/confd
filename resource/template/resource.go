@@ -176,7 +176,7 @@ func (t *TemplateResource) setVars() error {
 	var err error
 	log.Debug("Retrieving keys from store")
 	log.Debug("Key prefix set to " + t.Prefix)
-
+	// 返回key=prefix+keys 的键值对
 	result, err := t.storeClient.GetValues(util.AppendPrefix(t.Prefix, t.Keys))
 	if err != nil {
 		return err

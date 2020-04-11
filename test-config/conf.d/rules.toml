@@ -1,0 +1,9 @@
+[template]
+src = "alert.rules.tmpl"
+dest = "./test-config/test"
+prefix = "/prometheus"
+keys = [
+"/rules",
+]
+#check_cmd = "/usr/bin/promtool check config /etc/prometheus/prometheus.yml"
+#reload_cmd = ""

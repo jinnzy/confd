@@ -1,0 +1,6 @@
+groups:
+- name: fs-prom
+  rules:
+{{- range gets "/rules/*" }}
+{{  .Value }}
+{{- end }}

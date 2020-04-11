@@ -1,0 +1,17 @@
+groups:
+- name: fs-prom
+  rules:
+  - alert: filesystem_free
+    expr: node_filesystem_avail_bytes{mountpoint!~"/boot.*|/run.*|/selinux.*",fstype!~"tmpfs|rootfs"} /1024/1024/1024 < 2
+    for: 30s
+    labels:
+      severity: warn
+    annotations:
+      description: "实例{{ $labels.instance }}的{{ $labels.mountpoint }}目录剩余空间不足2g。(当前剩余空间为: {{ $value }}  job: {{ $labels.job }})"
+  - alert: server_down
+    expr: up{job!~"fs-sql-server"} == 0
+    for: 611s
+    labels:
+      severity: warn
+    annotations:
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."

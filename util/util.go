@@ -29,7 +29,7 @@ type FileInfo struct {
 	Mode os.FileMode
 	Md5  string
 }
-
+// 将配置文件中，prefix和key的组合
 func AppendPrefix(prefix string, keys []string) []string {
 	s := make([]string, len(keys))
 	for i, k := range keys {
