@@ -97,6 +97,8 @@ func (p *watchProcessor) monitorPrefix(t *TemplateResource) {
 	keys := util.AppendPrefix(t.Prefix, t.Keys)
 	for {
 		index, err := t.storeClient.WatchPrefix(t.Prefix, keys, t.lastIndex, p.stopChan)
+		log.Error("sleep 1")
+		time.Sleep(1*time.Second)
 		if err != nil {
 			p.errChan <- err
 			// Prevent backend errors from consuming all resources.

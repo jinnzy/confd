@@ -3,15 +3,22 @@ groups:
   rules:
   - alert: filesystem_free
     expr: node_filesystem_avail_bytes{mountpoint!~"/boot.*|/run.*|/selinux.*",fstype!~"tmpfs|rootfs"} /1024/1024/1024 < 2
-    for: 30s
+    for: 301s
     labels:
-      severity: warn
+      severity: info
     annotations:
       description: "实例{{ $labels.instance }}的{{ $labels.mountpoint }}目录剩余空间不足2g。(当前剩余空间为: {{ $value }}  job: {{ $labels.job }})"
   - alert: server_down
     expr: up{job!~"fs-sql-server"} == 0
-    for: 611s
+    for: 61s
     labels:
-      severity: warn
+      severity: info
     annotations:
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
+  - alert: test
+    expr: up == 0
+    for: 311s
+    labels:
+      severity: info
+    annotations:
+      description: "test"

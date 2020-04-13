@@ -97,10 +97,12 @@ func (c *Client) watch(key string, respChan chan watchResponse, cancelRoutine ch
 		select {
 		case e := <-keyEventCh:
 			if e.Type == zk.EventNodeDataChanged {
+				log.Debug("EventNodeDataChanged" + e.Path + string(e.Type) + string(e.State))
 				respChan <- watchResponse{1, e.Err}
 			}
 		case e := <-childEventCh:
 			if e.Type == zk.EventNodeChildrenChanged {
+				log.Debug("EventNodeChildrenChanged" + e.Path + string(e.Type) + string(e.State))
 				respChan <- watchResponse{1, e.Err}
 			}
 		case <-cancelRoutine:
